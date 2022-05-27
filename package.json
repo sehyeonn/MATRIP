@@ -18,5 +18,8 @@
     "nunjucks": "^3.2.3",
     "sequelize": "^6.20.0",
     "sequelize-cli": "^6.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
   }
 }
