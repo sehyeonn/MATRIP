@@ -9,6 +9,8 @@ const passport = require('passport');
 
 dotenv.config();
 const pageRouter = require('./routes/page');
+const { sequelize } = require('./models');
+const passportConfig = require('./passport');
 
 const app = express();
 passportConfig(); // 패스포트 설정
@@ -40,6 +42,8 @@ app.use(session({
         secure: false,
     },
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // 라우터 설정
 app.use('/', pageRouter);
