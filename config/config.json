@@ -1,8 +1,8 @@
 {
   "development": {
-    "username": "matrip",
-    "password": 1234,
-    "database": "database_development",
+    "username": "user",
+    "password": "1234",
+    "database": "matrip",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
