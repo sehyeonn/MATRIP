@@ -9,17 +9,20 @@ const User = require('../models/user');
 
 const router = express.Router();
 
-router.post('/join', isNotLoggedIn, async (req, res, next) => {
-    const { email, nick, password } = req.body;
+// 회원가입 처리 라우터
+router.post('/signup', isNotLoggedIn, async (req, res, next) => {
+    const { email, name, password } = req.body;
     try {
+        // 같은 이메일의 유저가 있는지 찾아 있다면 error
         const exUser = await User.findOne({ where: { email } });
         if (exUser) {
-            return res.redirect('/join?error=exist');
+            return res.redirect('/signup?error=exist');
         }
+        // 비밀번호를 암호화하여 데이터베이스에 저장
         const hash = await bcrypt.hash(password, 12);
         await User.create({
             email,
-            nick,
+            name,
             password: hash,
         });
         return res.redirect('/');
@@ -53,3 +56,5 @@ router.get('/logout', isLoggedIn, (req, res) => {
     req.session.destroy();
     res.redirect('/');
 });
+
+module.exports = router;
