@@ -11,7 +11,7 @@ const router = express.Router();
 
 // 회원가입 처리 라우터
 router.post('/signup', isNotLoggedIn, async (req, res, next) => {
-    const { email, name, password } = req.body;
+    const { email, username, password } = req.body;
     try {
         // 같은 이메일의 유저가 있는지 찾아 있다면 error
         const exUser = await User.findOne({ where: { email } });
@@ -22,7 +22,7 @@ router.post('/signup', isNotLoggedIn, async (req, res, next) => {
         const hash = await bcrypt.hash(password, 12);
         await User.create({
             email,
-            name,
+            username,
             password: hash,
         });
         return res.redirect('/');
@@ -32,6 +32,7 @@ router.post('/signup', isNotLoggedIn, async (req, res, next) => {
     }
 });
 
+// 로그인 처리 라우터
 router.post('/login', isNotLoggedIn, (req, res, next) => {
     passport.authenticate('local', (authError, user, info) => {
         if (authError) {
