@@ -5,6 +5,16 @@ html, body {
 }
 
 .mytrips {
-    margin: 0;
+    margin: 0 auto;
     max-width: 600px;
+}
+
+.locations {
+    margin: 0 auto;
+    max-width: 700px;
+}
+
+.location-search {
+    margin: 0 auto;
+    max-width: 700px;
 }

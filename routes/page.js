@@ -3,6 +3,7 @@
 //***************************
 const express = require('express');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
+const { Location, Trip, TripDetail, Spot, sequelize } = require('../models');
 
 const router = express.Router();
 
@@ -28,6 +29,28 @@ router.get('/login', isNotLoggedIn, (req, res, next) => {
 // 회원가입 화면 렌더링
 router.get('/signup', (req, res, next) => {
     res.render('signup');
+});
+
+// 여행지 목록을 보여주는 화면 렌더링
+router.get('/location', isLoggedIn, async (req, res, next) => {
+    const query = req.query.search;     // 검색어
+    let locations = [];
+    try {
+        if(query) {     // 검색어를 입력 받으면 해당 여행지만 보여줌
+            locations = await sequelize.query('SELECT * FROM locations WHERE name like "%'+ query +'%"', {
+                model: Location,
+                mapToModel: true
+            });
+        } else {
+            locations = await Location.findAll();
+        }
+        res.render('location', {
+            locations,
+        })
+    } catch(err) {
+        console.error(err);
+        next(err);
+    }
 });
 
 module.exports = router;
