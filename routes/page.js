@@ -6,10 +6,16 @@ const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 
 const router = express.Router();
 
+router.use((req, res, next) => {
+    res.locals.user = req.user;
+    next();
+});
+
 // 로그인 되어있으면 main.html 렌더링, 안되어있으면 /login으로 redirect 되어 로그인 하게 함
 router.get('/', isLoggedIn, (req, res, next) => {
     const trips = [];
     res.render('main', {
+
         trips,
     });
 });
