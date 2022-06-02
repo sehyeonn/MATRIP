@@ -46,11 +46,39 @@ router.get('/location', isLoggedIn, async (req, res, next) => {
         }
         res.render('location', {
             locations,
+        });
+    } catch(err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+// 선택한 여행지의 상세(기본 정보, 맛집, 관광지)를 보여주는 화면 렌더링
+router.get('/location/detail/:LocationId', isLoggedIn, async (req, res, next) => {
+    try {
+        const location = await Location.findOne({
+            where: { id: req.params.LocationId }
+        });
+        res.render('locationDetail', {
+            title: location.name,
+            location,
         })
     } catch(err) {
         console.error(err);
         next(err);
     }
 });
+
+// 해당 여행지의 관광지 리스트를 전달해주는 라우터
+router.get('/spots/:locationId', isLoggedIn, async (req, res, next) => {
+    const location = await Location.findOne({
+        where: { id: req.params.locationId },
+        include: [{
+            model: Spot,
+            attributes: ['id', 'name', 'type', 'contents'],
+        }],
+    });
+    res.send(location.Spots);
+})
 
 module.exports = router;

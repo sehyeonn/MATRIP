@@ -1,0 +1,120 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MATRIP - {{ title }}</title>
+
+    <link href="/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/list-groups.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/jumbotron.css">
+    <link rel="stylesheet" href="/css/public.css">
+</head>
+
+<body>
+    
+    <main>
+        <div class="container py-4">
+            <header class="pb-3 mb-4 border-bottom">
+                <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+                    <span class="fs-2">MATRIP</span>
+                </a>
+            </header>
+    
+            <div class="p-5 mb-4 bg-light rounded-3">
+                <div class="container-fluid py-5">
+                    <h1 class="display-5 fw-bold">{{ location.name }}</h1>
+                    <p class="col-md fs-4">
+                        {{ location.contents }}
+                    </p>
+                    <div class="row mt-5">
+                        <div class="col">
+                            <span class="fw-bold fs-5">언어</span><br>
+                            <span class="fs-5">{{ location.language }}</span>
+                        </div>
+                        <div class="col">
+                            <span class="fw-bold fs-5">시차</span><br>
+                            <span class="fs-5">한국시간 {{ location.timeDiff }}</span>
+                        </div>
+                        <div class="col">
+                            <span class="fw-bold fs-5">통화</span><br>
+                            <span class="fs-5">{{ location.currency }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="row align-items-md-stretch">
+                <div class="col-md-6 type-select">
+                    <div class="">
+                        <div class="row h-100 p-1 text-white bg-dark rounded-3">
+                            <button class="col text-center btn btn-outline-light p-3 fs-4 sight-btn">
+                                관광
+                            </button>
+                            <button class="col text-center btn btn-outline-light p-3 fs-4 rest-btn">
+                                맛집
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="h-100 p-5 bg-light border rounded-3">
+                        <div class="list-group w-auto spots">
+                            <!--여기에 선택한 목록(관광 or 맛집) 표시-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <footer class="pt-3 mt-4 text-muted border-top">
+                &copy; 2022 sehyeonn
+            </footer>
+        </div>
+    </main>
+
+    <script src="/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        const sightBtn = document.querySelector('.sight-btn');  // 관광 버튼
+        const restBtn = document.querySelector('.rest-btn');    // 맛집 버튼
+        const spotsContainer = document.querySelector('div.spots'); // 관광지 리스트를 담을 요소
+        let spotsHtmlList = []; // 각 관광지의 HTML 배열
+        
+        // 선택한 메뉴 관광(0) or 맛집(1)을 매개변수로 받아 목록을 만들어 채우는 함수
+        function makeSpotsListHTML(type) {
+            spotsHtmlList = [];
+            
+            axios.get(`/spots/{{ location.id }}`)   // 서버에서 관광지 리스트를 가져옴
+                .then((res) => {
+                    const spots = res.data;
+                    spots.forEach(spot => {
+                        if(spot.type == type) {
+                            spotsHtmlList.push(`
+                                <a href="/location/spot/${spot.id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                                    <div class="d-flex gap-2 w-100 justify-content-between">
+                                        <div class="align-self-center">
+                                            <h4 class="mb-0">${spot.name}</h4>
+                                            <p class="mb-0 opacity-75">${spot.contents}</p>
+                                        </div>
+                                    </div>
+                                </a>`
+                            );
+                        }
+                    });
+                    spotsContainer.innerHTML = spotsHtmlList.join('');  // 각 html들을 합쳐서 화면에 표시
+                })
+                .catch(err => console.error(err));
+        }
+        
+        sightBtn.addEventListener('click', (event) => {
+            sightBtn.classList.add('.active');
+            makeSpotsListHTML(0);
+        });
+        restBtn.addEventListener('click', (event) => {
+            restBtn.classList.add('.active');
+            makeSpotsListHTML(1);
+        });
+        
+    </script>
+</body>
+
+</html>
