@@ -39,6 +39,15 @@
                             <span class="fw-bold fs-5">통화</span><br>
                             <span class="fs-5">{{ location.currency }}</span>
                         </div>
+                        <div class="col">
+                            <form action="" method="post">
+                                <label for="start" class="form-label">시작일</label>
+                                <input type="date" name="start" id="start"><br>
+                                <label for="end" class="form-label">종료일</label>
+                                <input type="date" name="end" id="end"><br>
+                                <button class="btn btn-primary btn-lg" type="submit">일정 만들기</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -46,13 +55,15 @@
             <div class="row align-items-md-stretch">
                 <div class="col-md-6 type-select">
                     <div class="">
-                        <div class="row h-100 p-1 text-white bg-dark rounded-3">
-                            <button class="col text-center btn btn-outline-light p-3 fs-4 sight-btn">
-                                관광
-                            </button>
-                            <button class="col text-center btn btn-outline-light p-3 fs-4 rest-btn">
-                                맛집
-                            </button>
+                        <div class="row h-100 text-white rounded-3">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button class="col text-center btn btn-outline-dark p-3 fs-4 sight-btn">
+                                    관광
+                                </button>
+                                <button class="col text-center btn btn-outline-dark p-3 fs-4 rest-btn">
+                                    맛집
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
