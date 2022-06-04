@@ -19,7 +19,7 @@ module.exports = class Spot extends Sequelize.Model {
                 allowNull: false,
             },
             type: {     // 관광지 0, 맛집 1
-                type: Sequelize.TINYINT,
+                type: Sequelize.INTEGER,
                 allowNull: false,
             },
             contents: {     // 관광지 설명

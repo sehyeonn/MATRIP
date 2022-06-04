@@ -11,7 +11,7 @@ module.exports = class TripDetail extends Sequelize.Model {
                 allowNull: false,
             },
             number: {
-                type: Sequelize.DATEONLY,
+                type: Sequelize.INTEGER,
                 allowNull: false,
             },
         }, {

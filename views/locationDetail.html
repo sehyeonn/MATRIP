@@ -40,7 +40,7 @@
                             <span class="fs-5">{{ location.currency }}</span>
                         </div>
                         <div class="col">
-                            <form action="" method="post">
+                            <form action="/trip/{{ location.id }}" method="post">
                                 <label for="start" class="form-label">시작일</label>
                                 <input type="date" name="start" id="start"><br>
                                 <label for="end" class="form-label">종료일</label>

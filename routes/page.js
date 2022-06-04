@@ -4,6 +4,7 @@
 const express = require('express');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const { Location, Trip, TripDetail, Spot, sequelize } = require('../models');
+const { first } = require('nunjucks/src/filters');
 
 const router = express.Router();
 
@@ -13,10 +14,15 @@ router.use((req, res, next) => {
 });
 
 // 로그인 되어있으면 main.html 렌더링, 안되어있으면 /login으로 redirect 되어 로그인 하게 함
-router.get('/', isLoggedIn, (req, res, next) => {
-    const trips = [];
+router.get('/', isLoggedIn, async (req, res, next) => {
+    const trips = await Trip.findAll({
+        where: { UserId: req.user.id },
+        include: {
+            model: Location,
+            attributes: ['name'],
+        }
+    });
     res.render('main', {
-
         trips,
     });
 });
@@ -79,6 +85,40 @@ router.get('/spots/:locationId', isLoggedIn, async (req, res, next) => {
         }],
     });
     res.send(location.Spots);
+});
+
+// 선택한 여행 상세 정보 화면 렌더링
+router.get('/tripDetail/:tripId', isLoggedIn, async (req, res, next) => {
+    const trip = await Trip.findOne({
+        where: { id: req.params.tripId },
+        include: {
+            model: Location,
+            attributes: ['name'],
+        }
+    });
+    const tripDetails = await TripDetail.findAll({
+        where: { TripId: req.params.tripId },
+        include: [{
+            model: Spot,
+            attributes: ['name', 'lat', 'lng', 'type'],
+        }],
+        order: [
+            ['date'], ['number']
+        ]
+    });
+
+    const dates = [];
+    let date = new Date(trip.start);
+    while(date <= new Date(trip.end)) {
+        dates.push(new Date(date));
+        date.setDate(date.getDate() + 1);
+    }
+
+    res.render('tripDetail', {
+        trip,
+        tripDetails,
+        dates,
+    });
 })
 
 module.exports = router;
