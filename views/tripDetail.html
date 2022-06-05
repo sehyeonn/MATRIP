@@ -31,7 +31,8 @@
                             <div class="row justify-content-between">
                                 <span class="col-9 fs-3">{{ trip.Location.name }} 여행</span>
                                 {% if trip.UserId === user.id %}
-                                <button class="col btn btn-primary btn-md" type="submit">편집</button>
+                                <button class="col btn btn-primary btn-md edit">편집</button>
+                                <button class="d-none col btn btn-primary btn-md edit-complete" type="submit">완료</button>
                                 {% endif %}
                             </div>
 
@@ -49,6 +50,7 @@
                                                 <p class="mb-0 opacity-75 type">{{ '맛집' if tripDetail.Spot.type else '관광 명소' }}</p>
                                             </div>
                                         </div>
+                                        <button type="button" class="d-none btn-close delete" aria-label="Close" data-trip-detail-id="{{ tripDetail.id }}"></button>
                                     </a>
                                     {% endif %}
 
@@ -70,7 +72,33 @@
     </main>
 
     <script src="/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
+        const editBtn = document.querySelector('button.edit');
+        const editCompleteBtn = document.querySelector('button.edit-complete');
+        
+        const deleteBtns = document.querySelectorAll('button.delete');
+
+        editBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            editBtn.classList.add('d-none');
+            editCompleteBtn.classList.remove('d-none');
+            deleteBtns.forEach(btn => btn.classList.remove('d-none'));
+        });
+
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', async (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                await axios.delete(`/trip/tripDetail/${btn.dataset.tripDetailId}`, { tripId: '{{ trip.id }}' })
+                    .then(() => window.location.reload(true))
+                    .catch(err => {
+                        console.error(err);
+                        window.location.reload(true);
+                    });
+            });
+        });
     </script>
 </body>
 

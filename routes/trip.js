@@ -38,6 +38,18 @@ router.post('/tripDetail/:tripId', isLoggedIn, async (req, res, next) => {
     }
 });
 
+router.delete('/tripDetail/:tripDetailId', isLoggedIn, async (req, res, next) => {
+    try {
+        await TripDetail.destroy({
+            where: { id: req.params.tripDetailId },
+        });
+        res.redirect(`/tripDetail/${req.body.tripId}`);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+});
+
 // 해당 여행지의 새로운 내 여행을 추가하는 라우터
 router.post('/:locationId', isLoggedIn, async (req, res, next) => {
     try {
