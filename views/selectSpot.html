@@ -25,7 +25,7 @@
                     <div class="h-100 p-5 bg-light border rounded-3">
                         <div class="row input-group-lg mb-3 location-search">
                             <input type="text" class="col form-control" placeholder="관광 명소, 맛집 검색" aria-label="Recipient's username" aria-describedby="button-addon2" name="search">
-                            <button class="col btn btn-primary">선택 완료</button>
+                            <button class="col btn btn-primary complete">선택 완료</button>
                         </div>
                         <div class="p-2 bg-white border rounded-3 location-search mb-3 selected-spots" >
                             <!--여기에 선택한 관광지들 표시-->
@@ -52,6 +52,8 @@
         const selectedSpotsContainer = document.querySelector('div.selected-spots');
         let selectedSpotsHtmlList = [];
 
+        
+
         function makeSpotsListHTML(text) {
             spotsHtmlList = [];
             
@@ -73,6 +75,7 @@
                         }
                     });
                     spotsContainer.innerHTML = spotsHtmlList.join('');  // 각 html들을 합쳐서 화면에 표시
+
                 })
                 .catch(err => console.error(err));
         }
@@ -83,12 +86,14 @@
             event.stopPropagation();
 
             selectedSpotsHtmlList.push(
-                `<div class="d-inline-block p-2 bg-light border rounded-3 m-1 data-spotid="${event.currentTarget.dataset.spotid}">
+                `<div class="d-inline-block p-2 bg-light border rounded-3 m-1 selected" data-spotid="${event.currentTarget.dataset.spotid}">
                     <span class="fs-5">${event.currentTarget.dataset.spotname}</span>
                     <button onclick="cancelBtnHandler(event)" class="btn-close cancel" aria-label="Close" data-spotname="${event.currentTarget.dataset.spotname}"></button>
                 </div>`
             );
             selectedSpotsContainer.innerHTML = selectedSpotsHtmlList.join('');
+
+            document.querySelector('button.complete').addEventListener('click', selectComplete);
         }
 
         // X 버튼을 클릭하면 선택된 관광지에서 제외되도록 하는 함수
@@ -96,11 +101,25 @@
             console.log(event.currentTarget);
             selectedSpotsHtmlList = selectedSpotsHtmlList.filter(html => html.indexOf(`${event.currentTarget.dataset.spotname}`) === -1);
             selectedSpotsContainer.innerHTML = selectedSpotsHtmlList.join('');
+
+            document.querySelector('button.complete').addEventListener('click', selectComplete);
         }
         
         // 선택완료 버튼 클릭시 일정에 해당 장소들을 추가하도록 요청을 보내는 함수
         function selectComplete() {
-            
+            const selectedSpots = [];
+
+            document.querySelectorAll('div.selected')
+                .forEach((selected, index) => selectedSpots.push(
+                    {
+                        SpotId: selected.dataset.spotid,
+                        number: index + 1,
+                        date: '{{ date }}',
+                    }));
+                    
+            axios.post('/trip/tripDetail/{{ tripId }}', { selectedSpots })
+                .then(() => location.href = '/tripDetail/{{ tripId }}')
+                .catch(err => console.error(err));
         }
         
         window.onload = () => { makeSpotsListHTML('') };    // 관광지 목록 로드

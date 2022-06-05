@@ -110,7 +110,7 @@ router.get('/tripDetail/:tripId', isLoggedIn, async (req, res, next) => {
     const dates = [];
     let date = new Date(trip.start);
     while(date <= new Date(trip.end)) {
-        dates.push(new Date(date));
+        dates.push(`${date.getUTCFullYear()}-${date.getMonth()+1}-${date.getDate()}`);
         date.setDate(date.getDate() + 1);
     }
 
@@ -121,9 +121,11 @@ router.get('/tripDetail/:tripId', isLoggedIn, async (req, res, next) => {
     });
 });
 
-router.get('/spot/select/:locationId', isLoggedIn, (req, res, next) => {
+router.get('/spot/select/:tripId/:locationId/:date', isLoggedIn, (req, res, next) => {
     res.render('selectSpot', {
-        locationId: req.params.locationId
+        locationId: req.params.locationId,
+        tripId: req.params.tripId,
+        date: req.params.date,
     });
 });
 

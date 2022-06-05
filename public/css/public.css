@@ -24,3 +24,9 @@ html, body {
     padding-left: 24px;
     padding-right: 24px;
 }
+
+.number-input {
+    text-align: right;
+    max-width: 45px;
+    max-height: 45px;
+}
