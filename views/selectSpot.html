@@ -1,0 +1,111 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MATRIP - 장소 추가</title>
+
+    <link href="/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/list-groups.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/jumbotron.css">
+    <link rel="stylesheet" href="/css/public.css">
+</head>
+
+<body>
+    
+    <main>
+        <div class="container py-4">
+            <header class="pb-3 mb-4 border-bottom">
+                <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+                    <span class="fs-2">MATRIP</span>
+                </a>
+            </header>
+    
+            <div class="row align-items-md-stretch">
+
+                    <div class="h-100 p-5 bg-light border rounded-3">
+                        <div class="row input-group-lg mb-3 location-search">
+                            <input type="text" class="col form-control" placeholder="관광 명소, 맛집 검색" aria-label="Recipient's username" aria-describedby="button-addon2" name="search">
+                            <button class="col btn btn-primary">선택 완료</button>
+                        </div>
+                        <div class="p-2 bg-white border rounded-3 location-search mb-3 selected-spots" >
+                            <!--여기에 선택한 관광지들 표시-->
+                        </div>
+                        <div class="list-group w-auto locations spots">
+                            <!--여기에 관광지 목록 표시-->
+                        </div>
+                    </div>
+                
+            </div>
+    
+            <footer class="pt-3 mt-4 text-muted border-top">
+                &copy; 2022 sehyeonn
+            </footer>
+        </div>
+    </main>
+
+    <script src="/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        const spotsContainer = document.querySelector('div.spots'); // 관광지 리스트를 담을 요소
+        const searchInput = document.querySelector('input[name="search"]');
+        
+        const selectedSpotsContainer = document.querySelector('div.selected-spots');
+        let selectedSpotsHtmlList = [];
+
+        function makeSpotsListHTML(text) {
+            spotsHtmlList = [];
+            
+            axios.get(`/spots/{{ locationId }}`)   // 서버에서 관광지 리스트를 가져옴
+                .then((res) => {
+                    const spots = res.data;
+                    spots.forEach(spot => {
+                        if(spot.name.indexOf(text) > -1) {
+                            spotsHtmlList.push(`
+                                <a href="/location/spot/${spot.id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                                    <div class="d-flex gap-2 w-100 justify-content-between">
+                                        <div class="align-self-center">
+                                            <h4 class="mb-0">${spot.name}</h4>
+                                        </div>
+                                        <button onclick="selectBtnHandler(event)" class="btn btn-outline-primary select" data-spotid="${spot.id}" data-spotname="${spot.name}">선택</button>
+                                    </div>
+                                </a>`
+                            );
+                        }
+                    });
+                    spotsContainer.innerHTML = spotsHtmlList.join('');  // 각 html들을 합쳐서 화면에 표시
+                })
+                .catch(err => console.error(err));
+        }
+
+        // 선택 버튼을 클릭하면 클릭한 관광지들을 따로 표시하도록 하는 함수
+        function selectBtnHandler(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            selectedSpotsHtmlList.push(
+                `<div class="d-inline-block p-2 bg-light border rounded-3 m-1 data-spotid="${event.currentTarget.dataset.spotid}">
+                    <span class="fs-5">${event.currentTarget.dataset.spotname}</span>
+                    <button onclick="cancelBtnHandler(event)" class="btn-close cancel" aria-label="Close" data-spotname="${event.currentTarget.dataset.spotname}"></button>
+                </div>`
+            );
+            selectedSpotsContainer.innerHTML = selectedSpotsHtmlList.join('');
+        }
+
+        // X 버튼을 클릭하면 선택된 관광지에서 제외되도록 하는 함수
+        function cancelBtnHandler(event) {
+            console.log(event.currentTarget);
+            selectedSpotsHtmlList = selectedSpotsHtmlList.filter(html => html.indexOf(`${event.currentTarget.dataset.spotname}`) === -1);
+            selectedSpotsContainer.innerHTML = selectedSpotsHtmlList.join('');
+        }
+        
+        // 선택완료 버튼 클릭시 일정에 해당 장소들을 추가하도록 요청을 보내는 함수
+        function selectComplete() {
+            
+        }
+        
+        window.onload = () => { makeSpotsListHTML('') };    // 관광지 목록 로드
+        searchInput.addEventListener('change', () => { makeSpotsListHTML(searchInput.value) });     // 관광지 검색
+    </script>
+</body>
+
+</html>

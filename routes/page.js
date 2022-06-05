@@ -119,6 +119,12 @@ router.get('/tripDetail/:tripId', isLoggedIn, async (req, res, next) => {
         tripDetails,
         dates,
     });
-})
+});
+
+router.get('/spot/select/:locationId', isLoggedIn, (req, res, next) => {
+    res.render('selectSpot', {
+        locationId: req.params.locationId
+    });
+});
 
 module.exports = router;
