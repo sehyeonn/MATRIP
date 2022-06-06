@@ -93,6 +93,11 @@
             deleteBtns.forEach(btn => btn.classList.remove('d-none'));
         });
 
+        editCompleteBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            location.reload();
+        })
+
         deleteBtns.forEach(btn => {
             btn.addEventListener('click', async (event) => {
                 event.preventDefault();
@@ -119,14 +124,25 @@
             center,
         };
 
+        // 맵에 번호 마커
         function showMakers() {
-            spotsOfDate.forEach(spot => {
+            const path = [];
+            spotsOfDate.forEach((spot, index) => {
                 new google.maps.Marker({
                     position: { lat: Number(spot.dataset.lat), lng: Number(spot.dataset.lng) },
                     map,
+                    icon: `/images/makers/${index + 1}.png`,
                 });
+                path.push({ lat: Number(spot.dataset.lat), lng: Number(spot.dataset.lng) });
             });
-            
+            const line = new google.maps.Polyline({
+                path,
+                geodesic: true,
+                strokeColor: "#999999",
+                strokeOpacity: 1.0,
+                strokeWeight: 5,
+            });
+            line.setMap(map);
         }
 
         function initMap() {
@@ -149,6 +165,7 @@
             });
         });
 
+        // 장소들의 중심 좌표를 구함
         function getCenterPoint(points) {
             const minLat = Number(points.reduce((a, b) => Number(a.dataset.lat) < Number(b.dataset.lat) ? a : b).dataset.lat);
             const maxLat = Number(points.reduce((a, b) => Number(a.dataset.lat) > Number(a.dataset.lat) ? a : b).dataset.lat);
