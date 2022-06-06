@@ -5,7 +5,8 @@ html, body {
 }
 
 .mytrips,
-.spots {
+.spots,
+.othersTrip {
     margin: 0 auto;
     max-width: 600px;
 }

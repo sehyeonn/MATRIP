@@ -53,22 +53,31 @@
             </div>
     
             <div class="row align-items-md-stretch">
-                <div class="col-md-6 type-select">
-                    <div class="">
-                        <div class="row h-100 text-white rounded-3">
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <button class="col text-center btn btn-outline-dark p-3 fs-4 sight-btn">
-                                    관광
-                                </button>
-                                <button class="col text-center btn btn-outline-dark p-3 fs-4 rest-btn">
-                                    맛집
-                                </button>
-                            </div>
+                <div class="col-md-6">
+                    <div class="h-100 p-5 bg-light border rounded-3">
+                        <div class="btn-group w-100" role="group" aria-label="Basic example">
+                            <button class="text-center btn btn-secondary p-3 fs-4 border mine-btn">
+                                내 여행
+                            </button>
+                            <button class="text-center btn btn-secondary p-3 fs-4 border others-btn">
+                                다른 사람의 여행
+                            </button>
+                        </div>
+                        <div class="list-group w-auto othersTrip">
+                            <!--여기에 다른 사람들의 여행 일정 목록 표시-->
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="h-100 p-5 bg-light border rounded-3">
+                        <div class="btn-group w-100" role="group" aria-label="Basic example">
+                            <button class="col text-center btn btn-outline-dark p-3 fs-4 sight-btn">
+                                관광
+                            </button>
+                            <button class="col text-center btn btn-outline-dark p-3 fs-4 rest-btn">
+                                맛집
+                            </button>
+                        </div>
                         <div class="list-group w-auto spots">
                             <!--여기에 선택한 목록(관광 or 맛집) 표시-->
                         </div>
@@ -88,10 +97,14 @@
         const sightBtn = document.querySelector('.sight-btn');  // 관광 버튼
         const restBtn = document.querySelector('.rest-btn');    // 맛집 버튼
         const spotsContainer = document.querySelector('div.spots'); // 관광지 리스트를 담을 요소
+
+        const mineBtn = document.querySelector('.mine-btn');
+        const othersTripBtn = document.querySelector('.others-btn');
+        const tripsContainer = document.querySelector('div.othersTrip');
         
         // 선택한 메뉴 관광(0) or 맛집(1)을 매개변수로 받아 목록을 만들어 채우는 함수
         function makeSpotsListHTML(type) {
-            spotsHtmlList = [];
+            const spotsHtmlList = [];
             
             axios.get(`/spots/{{ location.id }}`)   // 서버에서 관광지 리스트를 가져옴
                 .then((res) => {
@@ -114,7 +127,7 @@
                 })
                 .catch(err => console.error(err));
         }
-        
+
         sightBtn.addEventListener('click', (event) => {
             sightBtn.classList.add('.active');
             makeSpotsListHTML(0);
@@ -123,7 +136,54 @@
             restBtn.classList.add('.active');
             makeSpotsListHTML(1);
         });
-        
+
+        // 해당 여행지의 다른 사람의 여행 목록을 만들어 채움
+        othersTripBtn.addEventListener('click', (event) => {
+            const othersHtmlList = [];
+
+            axios.get(`/trips/{{ location.id }}`)
+                .then((res) => {
+                    const trips = res.data;
+                    trips.forEach(trip => {
+                        othersHtmlList.push(`
+                            <a href="/tripDetail/${trip.UserId}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                                <div class="d-flex gap-2 w-100 justify-content-between">
+                                    <div class="align-self-center">
+                                        <h4 class="mb-0">${trip.User.username}님의 {{ location.name }} 여행</h4>
+                                        <p class="mb-0 opacity-75">${trip.start} ~ ${trip.end}</p>
+                                    </div>
+                                </div>
+                            </a>`
+                        );
+                    });
+                    tripsContainer.innerHTML = othersHtmlList.join('');
+                })
+                .catch(err => console.error(err));
+        });
+
+        // 해당 여행지의 내 여행 목록을 만들어 채움
+        mineBtn.addEventListener('click', (event) => {
+            const othersHtmlList = [];
+
+            axios.get(`/trips/my/{{ location.id }}`)
+                .then((res) => {
+                    const trips = res.data;
+                    trips.forEach(trip => {
+                        othersHtmlList.push(`
+                            <a href="/tripDetail/${trip.UserId}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                                <div class="d-flex gap-2 w-100 justify-content-between">
+                                    <div class="align-self-center">
+                                        <h4 class="mb-0">{{ location.name }} 여행</h4>
+                                        <p class="mb-0 opacity-75">${trip.start} ~ ${trip.end}</p>
+                                    </div>
+                                </div>
+                            </a>`
+                        );
+                    });
+                    tripsContainer.innerHTML = othersHtmlList.join('');
+                })
+                .catch(err => console.error(err));
+        });
     </script>
 </body>
 
