@@ -35,3 +35,7 @@ html, body {
 img.mySlides {
     transition: 0.5s;
 }
+
+img.location-img {
+    max-height: 650px;
+}
