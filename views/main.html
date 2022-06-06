@@ -33,7 +33,12 @@
             <div class="row align-items-md-stretch">
                 <div class="col-md-6">
                     <div class="">
-                        <div class="h-100 p-4 text-white bg-dark rounded-3"></div>
+                        <img class="mySlides w-100" src="/images/main/1.jpg">
+                        <img class="mySlides w-100" src="/images/main/2.jpg">
+                        <img class="mySlides w-100" src="/images/main/3.jpg">
+                        <img class="mySlides w-100" src="/images/main/4.jpg">
+                        <img class="mySlides w-100" src="/images/main/5.jpg">
+                        <img class="mySlides w-100" src="/images/main/6.jpg">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -42,7 +47,7 @@
                             <h2>내 여행</h2>
                             {% for trip in trips %}
                             <a href="/tripDetail/{{trip.id}}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
-                                <img src="https://github.com/twbs.png" alt="twbs" width="90" height="90" class="rounded-circle flex-shrink-0">
+                                <img src="https://github.com/twbs.png" alt="twbs" width="90" height="90" class="rounded-circle flex-shrink-0 location-icon" data-location="{{ trip.Location.name }}">
                                 <div class="d-flex gap-2 w-100 justify-content-between">
                                     <div class="align-self-center">
                                         <h4 class="mb-0">{{ trip.Location.name }} 여행</h4>
@@ -77,6 +82,7 @@
     </main>
 
     <script src="/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/image.js"></script>
 </body>
 
 </html>

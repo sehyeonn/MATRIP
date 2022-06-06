@@ -30,7 +30,7 @@
                         <div class="list-group w-auto locations">
                             {% for location in locations %}
                             <a href="/location/detail/{{location.id}}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
-                                <img src="https://github.com/twbs.png" alt="twbs" width="70" height="70" class="rounded-circle flex-shrink-0">
+                                <img src="https://github.com/twbs.png" alt="twbs" width="70" height="70" class="rounded-circle flex-shrink-0 location-icon" data-location="{{ location.name }}">
                                 <div class="d-flex gap-2 w-100 justify-content-between">
                                     <div class="align-self-center">
                                         <h4 class="mb-0">{{ location.name }}</h4>
@@ -50,6 +50,7 @@
     </main>
 
     <script src="/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/image.js"></script>
 </body>
 
 </html>
