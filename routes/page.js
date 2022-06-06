@@ -118,6 +118,7 @@ router.get('/tripDetail/:tripId', isLoggedIn, async (req, res, next) => {
         trip,
         tripDetails,
         dates,
+        mapApiKey: process.env.MAP_API_KEY,
     });
 });
 
@@ -128,5 +129,21 @@ router.get('/spot/select/:tripId/:locationId/:date', isLoggedIn, (req, res, next
         date: req.params.date,
     });
 });
+
+// 해당 관광지의 상세정보 페이지를 렌더링하는 라우터
+router.get('/spot/detail/:spotId', isLoggedIn, async (req, res, next) => {
+    try {
+        const spot = await Spot.findOne({
+            where: { id: req.params.spotId },
+        });
+        res.render('spotDetail', {
+            spot,
+            mapApiKey: process.env.MAP_API_KEY,
+        });
+    } catch(err) {
+        console.error(err);
+        next(err);
+    }
+})
 
 module.exports = router;

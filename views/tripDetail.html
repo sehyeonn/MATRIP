@@ -22,7 +22,8 @@
     
             <div class="row align-items-md-stretch">
                 <div class="col-md-6">
-                    <div class="h-100 p-5 rounded-3">
+                    <div class="h-100 p-1 rounded-3">
+                        <div id="map" style="width:100%; height: 60vh;"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -37,15 +38,19 @@
                             </div>
 
                             {% for date in dates %}
-                            <div class="fs-3 mt-4">{{ date }} <hr class="mt-1 mb-1"></div>
+                            <div class="mt-4">
+                                <div class="fs-3">{{ date }}
+                                <button class="btn btn-outline-dark btn-md mb-1 showMap" data-date="{{ date }}">지도 보기</button></div>
+                            </div>
+                            <hr class="mt-1 mb-3">
 
                                 {% for tripDetail in tripDetails %}
                                     
                                     {% if tripDetail.date.substring(tripDetail.date.lastIndexOf('-')) === date.substring(date.lastIndexOf('-')) %}
-                                    <a href="/spotDetail/{{ tripDetail.SpotId }}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                                    <a href="/spot/detail/{{ tripDetail.SpotId }}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
                                         <input type="number" class="number-input fs-5 rounded-3 border" name="number" value="{{ tripDetail.number }}" disabled>
                                         <div class="d-flex gap-2 w-100 justify-content-between">
-                                            <div class="align-self-center">
+                                            <div class="align-self-center spot" data-lat="{{ tripDetail.Spot.lat }}" data-lng="{{ tripDetail.Spot.lng }}" data-date="{{ date }}">
                                                 <h4 class="mb-0">{{ tripDetail.Spot.name }}</h4>
                                                 <p class="mb-0 opacity-75 type">{{ '맛집' if tripDetail.Spot.type else '관광 명소' }}</p>
                                             </div>
@@ -73,6 +78,8 @@
 
     <script src="/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ mapApiKey }}&libraries=geometry&callback=initMap&region=kr"></script>
+    
     <script>
         const editBtn = document.querySelector('button.edit');
         const editCompleteBtn = document.querySelector('button.edit-complete');
@@ -99,6 +106,63 @@
                     });
             });
         });
+
+
+        // 맵 표시
+        const dates = '{{dates}}'.split(',');
+        let spotsOfDate = Array.prototype.slice.call(document.querySelectorAll('div.spot')).filter(spot => spot.dataset.date === dates[0]);   // 첫째날 장소들
+        let center = getCenterPoint(spotsOfDate);     // 지도의 중심
+        
+        let map;
+        let mapOptions = {
+            zoom: 13,
+            center,
+        };
+
+        function showMakers() {
+            spotsOfDate.forEach(spot => {
+                new google.maps.Marker({
+                    position: { lat: Number(spot.dataset.lat), lng: Number(spot.dataset.lng) },
+                    map,
+                });
+            });
+            
+        }
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            showMakers();
+        }
+
+        // 지도 보기 버튼을 클릭하면 해당 날짜의 장소들이 지도에 표시하도록 리스트
+        const showMapBtns = document.querySelectorAll('button.showMap');
+        showMapBtns.forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                const spots = document.querySelectorAll('div.spot');
+                spotsOfDate = Array.prototype.slice.call(spots).filter(spot => spot.dataset.date === btn.dataset.date);
+                const center = getCenterPoint(spotsOfDate);
+                mapOptions = {
+                    zoom: 13,
+                    center,
+                };
+                initMap();
+            });
+        });
+
+        function getCenterPoint(points) {
+            const minLat = Number(points.reduce((a, b) => Number(a.dataset.lat) < Number(b.dataset.lat) ? a : b).dataset.lat);
+            const maxLat = Number(points.reduce((a, b) => Number(a.dataset.lat) > Number(a.dataset.lat) ? a : b).dataset.lat);
+            const minLng = Number(points.reduce((a, b) => Number(a.dataset.lng) < Number(b.dataset.lng) ? a : b).dataset.lng);
+            const maxLng = Number(points.reduce((a, b) => Number(a.dataset.lng) > Number(b.dataset.lng) ? a : b).dataset.lng);
+
+            //const distance = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(minLat, minLng), new google.maps.LatLng(maxLat, maxLng));
+
+            return { 
+                lat: (minLat + (maxLat-minLat) / 2),
+                lng: (minLng + (maxLng-minLng) / 2),
+            };
+        }
+
     </script>
 </body>
 
