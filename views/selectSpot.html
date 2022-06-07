@@ -63,7 +63,7 @@
                     spots.forEach(spot => {
                         if(spot.name.indexOf(text) > -1) {
                             spotsHtmlList.push(`
-                                <a href="/location/spot/${spot.id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                                <a href="/spot/detail/${spot.id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
                                     <div class="d-flex gap-2 w-100 justify-content-between">
                                         <div class="align-self-center">
                                             <h4 class="mb-0">${spot.name}</h4>
