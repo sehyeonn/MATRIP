@@ -92,6 +92,7 @@
         
         const deleteBtns = document.querySelectorAll('button.delete');
 
+        // 편집 버튼 클릭
         if(editBtn) {
             editBtn.addEventListener('click', (event) => {
                 event.preventDefault();
@@ -100,14 +101,14 @@
                 deleteBtns.forEach(btn => btn.classList.remove('d-none'));
             });
         }
-
+        // 완료 버튼 클릭
         if(editCompleteBtn) {
             editCompleteBtn.addEventListener('click', (event) => {
                 event.preventDefault();
                 location.reload();
             });
         }
-
+        // X 버튼 클릭
         deleteBtns.forEach(btn => {
             btn.addEventListener('click', async (event) => {
                 event.preventDefault();

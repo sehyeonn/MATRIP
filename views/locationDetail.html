@@ -131,17 +131,18 @@
                 })
                 .catch(err => console.error(err));
         }
-
+        // 관광 버튼 클릭
         sightBtn.addEventListener('click', (event) => {
             sightBtn.classList.add('.active');
             makeSpotsListHTML(0);
         });
+        // 맛집 버튼 클릭
         restBtn.addEventListener('click', (event) => {
             restBtn.classList.add('.active');
             makeSpotsListHTML(1);
         });
 
-        // 해당 여행지의 다른 사람의 여행 목록을 만들어 채움
+        // 다른 사람의 여행 버튼 클릭, 해당 여행지의 다른 사람의 여행 목록을 만들어 채움
         othersTripBtn.addEventListener('click', (event) => {
             const othersHtmlList = [];
 
@@ -150,7 +151,7 @@
                     const trips = res.data;
                     trips.forEach(trip => {
                         othersHtmlList.push(`
-                            <a href="/tripDetail/${trip.UserId}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                            <a href="/tripDetail/${trip.id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
                                 <div class="d-flex gap-2 w-100 justify-content-between">
                                     <div class="align-self-center">
                                         <h4 class="mb-0">${trip.User.username}님의 {{ location.name }} 여행</h4>
@@ -165,7 +166,7 @@
                 .catch(err => console.error(err));
         });
 
-        // 해당 여행지의 내 여행 목록을 만들어 채움
+        // 내 여행 버튼 클릭, 해당 여행지의 내 여행 목록을 만들어 채움
         mineBtn.addEventListener('click', (event) => {
             const othersHtmlList = [];
 
@@ -174,7 +175,7 @@
                     const trips = res.data;
                     trips.forEach(trip => {
                         othersHtmlList.push(`
-                            <a href="/tripDetail/${trip.UserId}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                            <a href="/tripDetail/${trip.id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
                                 <div class="d-flex gap-2 w-100 justify-content-between">
                                     <div class="align-self-center">
                                         <h4 class="mb-0">{{ location.name }} 여행</h4>

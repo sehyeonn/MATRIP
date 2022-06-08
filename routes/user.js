@@ -31,7 +31,7 @@ router.post('/signup', isNotLoggedIn, async (req, res, next) => {
         return next(error);
     }
 });
-
+ 
 // 로그인 처리 라우터
 router.post('/login', isNotLoggedIn, (req, res, next) => {
     passport.authenticate('local', (authError, user, info) => {
@@ -56,6 +56,7 @@ router.get('/logout', isLoggedIn, (req, res) => {
     // Since version 0.6.0 (which was released only a few days ago by the time of writing this), req.logout is asynchronous. This is part of a larger change that averts session fixation attacks.
     req.logout((err) => {
         if (err) { return next(err); }
+        req.session.destroy();
         res.redirect('/');
     });
 });

@@ -154,8 +154,9 @@ router.get('/tripDetail/:tripId', isLoggedIn, async (req, res, next) => {
             ]
         });
 
-        const dates = [];
+        const dates = [];   // 시작일 ~ 종료일까지의 날짜들을 저장할 배열
         let date = new Date(trip.start);
+        // 날짜를 yyyy-mm-dd 형태의 문자열로 만들어 저장
         while(date <= new Date(trip.end)) {
             dates.push(`${date.getUTCFullYear()}-${String(date.getMonth()+1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`);
             date.setDate(date.getDate() + 1);
